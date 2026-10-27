@@ -38,8 +38,11 @@ for pack in "$SRC"/BookOS-Icon-Pack-*/; do
         continue
     fi
 
-    rm -rf "$target"
-    cp -r "$pack" "$target"
+    # Se conserva `cursors/`: BookOS-Cursor instala ahí mismo (comparten nombre
+    # de tema) y un `rm -rf` del directorio dejaba la sesión con los de Breeze.
+    mkdir -p "$target"
+    find "$target" -mindepth 1 -maxdepth 1 ! -name cursors -exec rm -rf {} +
+    cp -r "$pack." "$target/"
     rm -f "$target/generador.py"          # no empaquetar el generador
     echo "  ✓ instalado $name → $target"
     installed+=("$name")

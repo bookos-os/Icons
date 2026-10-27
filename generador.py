@@ -35,11 +35,15 @@ BOOKOS_EXTRA = {
     "bookos-shell":         f"{_BOOKOS_REPOS}/bookos-shell/src-tauri/icons/icon.svg",
     "bookos-new":           f"{_BOOKOS_REPOS}/BookOS-New/src-tauri/icons/icon.svg",
 }
+# Iconos que ya traen su propia silueta en vez de glifo sobre un cuadrado de
+# color: quitarles el primer rect como «fondo» se comería parte del dibujo.
+# Se copian tal cual en todas las variantes.
+BOOKOS_TAL_CUAL = {"bookos-explorer.svg"}
 # Diseños propios del pack: tienen prioridad sobre hicolor y BOOKOS_EXTRA.
 BOOKOS_LOCAL = os.path.join(os.path.dirname(os.path.abspath(__file__)), "bookos-src")
 FACTOR_OCUPACION = 0.78          # tamaño del logo dentro de la base (0-1)
 LIENZO = 512                     # tamaño del lienzo de la base
-RADIO = 80                       # radio de las esquinas
+RADIO = 120                      # radio de las esquinas
 
 # Cada variante: (carpeta destino, color de fondo, nombre del tema, comentario)
 VARIANTES = {
@@ -191,6 +195,11 @@ def generar_variante(clave: str) -> None:
             try:
                 with open(ruta_src, "r", encoding="utf-8") as f:
                     contenido_origen = f.read()
+                if archivo in BOOKOS_TAL_CUAL:
+                    with open(os.path.join(out_dir, archivo), "w", encoding="utf-8") as f:
+                        f.write(contenido_origen)
+                    bookos += 1
+                    continue
                 match_svg = re.search(r'<svg[^>]*>(.*)</svg>', contenido_origen, re.DOTALL | re.IGNORECASE)
                 if not match_svg:
                     continue
